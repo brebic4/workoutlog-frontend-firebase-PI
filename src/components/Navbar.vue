@@ -15,8 +15,8 @@ const showLogoutConfirm = ref(false)
 const requestLogout = () => {
   showLogoutConfirm.value = true
 }
-const confirmLogout = () => {
-  auth.logout()
+const confirmLogout = async () => {
+  await auth.logout()
   showLogoutConfirm.value = false
   router.push('/login')
 }
