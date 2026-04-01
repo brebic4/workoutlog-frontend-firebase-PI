@@ -11,6 +11,7 @@ import {
   apiChangePassword,
 } from '../api/auth'
 import { useWorkoutsStore } from './workouts'
+import { useAdminStore } from './admin'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -100,11 +101,14 @@ export const useAuthStore = defineStore('auth', {
 
     async logout() {
       const workoutsStore = useWorkoutsStore()
+      const adminStore = useAdminStore()
 
       await apiLogout()
       this.firebaseUser = null
       this.user = null
+
       workoutsStore.clearWorkouts()
+      adminStore.clearAdminState()
     },
 
     async forgotPassword(email) {

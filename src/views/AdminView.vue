@@ -82,10 +82,6 @@ const availableTypes = computed(() => {
   return Array.from(set).sort()
 })
 
-const applyFilters = async () => {
-  await admin.fetchAdminWorkouts(filters.value)
-}
-
 const requestDelete = (id) => {
   deleteTargetId.value = id
   showDeleteConfirm.value = true
@@ -137,7 +133,7 @@ const typeBars = computed(() => {
   }))
 })
 
-const reset = async () => {
+const reset = () => {
   filters.value = { email: '', type: '' }
 }
 </script>
