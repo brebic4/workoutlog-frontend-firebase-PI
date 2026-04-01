@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import WorkoutsView from '../views/WorkoutsView.vue'
 import AdminView from '../views/AdminView.vue'
+import ForgotPasswordView from '../views/ForgotPasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +15,7 @@ const router = createRouter({
     { path: '/register', component: RegisterView, meta: { guestOnly: true } },
     { path: '/workouts', component: WorkoutsView, meta: { requiresAuth: true } },
     { path: '/admin', component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
+    { path: '/forgot-password', component: ForgotPasswordView, meta: { guestOnly: true } },
   ],
 })
 
