@@ -1,10 +1,12 @@
 <script setup>
 import { useAuthStore } from '../stores/auth'
-import BaseButton from '../components/ui/BaseButton.vue'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+
 import ConfirmModal from '../components/ui/ConfirmModal.vue'
 import ChangePasswordModal from './ui/ChangePasswordModal.vue'
+import BaseButton from '../components/ui/BaseButton.vue'
+import ChangeUsernameModal from './ui/ChangeUsernameModal.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -27,9 +29,11 @@ const cancelLogout = () => {
 
 // Profile dropdown
 const showPwModal = ref(false)
-
 // Profile dropdown state
 const showProfileMenu = ref(false)
+
+const showUsernameModal = ref(false)
+const usernameLoading = ref(false)
 
 const toggleProfileMenu = () => {
   showProfileMenu.value = !showProfileMenu.value
@@ -53,6 +57,27 @@ const openChangePassword = () => {
 const closePwModal = () => {
   showPwModal.value = false
 }
+
+const openChangeUsername = () => {
+  showProfileMenu.value = false
+  showUsernameModal.value = true
+}
+
+const closeUsernameModal = () => {
+  showUsernameModal.value = false
+}
+
+const saveUsername = async (newUsername) => {
+  usernameLoading.value = true
+
+  try {
+    await auth.changeUsername(newUsername)
+    showUsernameModal.value = false
+  } finally {
+    usernameLoading.value = false
+  }
+}
+
 const onPasswordChanged = () => {
   showPwModal.value = false
   router.push('/login')
@@ -91,6 +116,12 @@ const logoutFromMenu = () => {
             v-if="showProfileMenu"
             class="absolute right-0 top-12 w-72 bg-white border rounded-2xl shadow-lg p-2 z-50"
           >
+            <!-- Username -->
+            <div class="px-3 py-2 text-sm text-gray-600">
+              <div class="text-xs text-gray-400">Username</div>
+              <div class="font-semibold break-all">{{ auth.user?.username || '-' }}</div>
+            </div>
+
             <!-- Email -->
             <div class="px-3 py-2 text-sm text-gray-600">
               <div class="text-xs text-gray-400">Email</div>
@@ -98,6 +129,14 @@ const logoutFromMenu = () => {
             </div>
 
             <div class="my-2 border-t"></div>
+
+            <button
+              type="button"
+              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 transition"
+              @click="openChangeUsername"
+            >
+              Promijeni username
+            </button>
 
             <!-- Change password -->
             <button
@@ -131,4 +170,12 @@ const logoutFromMenu = () => {
   />
 
   <ChangePasswordModal :show="showPwModal" @close="closePwModal" @success="onPasswordChanged" />
+
+  <ChangeUsernameModal
+    :show="showUsernameModal"
+    :currentUsername="auth.user?.username || ''"
+    :loading="usernameLoading"
+    @close="closeUsernameModal"
+    @save="saveUsername"
+  />
 </template>
