@@ -32,6 +32,7 @@ onMounted(async () => {
   emailInputRef.value?.focus()
 })
 
+//Preventivno - Firebase sigurnosni mehanizam šalje reset i kada je krivi email
 const extractMessage = (e) => {
   const msg = e?.message || ''
 

@@ -2,6 +2,7 @@
 import { nextTick, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { getAuthErrorMessage } from '@/utils/authErrorMessages'
 
 import BaseCard from '../components/ui/BaseCard.vue'
 import BaseInput from '../components/ui/BaseInput.vue'
@@ -36,14 +37,7 @@ onMounted(async () => {
 })
 
 const extractMessage = (e) => {
-  return (
-    e?.response?.data?.message ||
-    e?.response?.data?.error?.message ||
-    e?.response?.data?.error ||
-    auth.error ||
-    e?.message ||
-    'Neuspješna prijava.'
-  )
+  return getAuthErrorMessage(e, 'Neuspješna prijava.')
 }
 
 const submit = async () => {
@@ -96,7 +90,7 @@ const submit = async () => {
         </div>
 
         <Transition name="fade-slide">
-          <p v-if="formError" class="text-sm font-bold text-red-600">
+          <p v-if="formError" class="text-sm font-bold text-red-600 whitespace-pre-line">
             {{ formError }}
           </p>
         </Transition>
