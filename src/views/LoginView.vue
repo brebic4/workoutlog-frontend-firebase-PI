@@ -40,6 +40,15 @@ const extractMessage = (e) => {
   return getAuthErrorMessage(e, 'Neuspješna prijava.')
 }
 
+const loginWithGoogle = async () => {
+  try {
+    await auth.loginWithGoogle()
+    router.push('/workouts')
+  } catch (e) {
+    formError.value = extractMessage(e)
+  }
+}
+
 const submit = async () => {
   clearError()
 
@@ -96,6 +105,25 @@ const submit = async () => {
         </Transition>
 
         <BaseButton class="w-full" :loading="auth.loading" type="submit"> Prijava </BaseButton>
+
+        <div class="flex items-center gap-2 my-2">
+          <div class="flex-1 h-px bg-gray-300"></div>
+          <span class="text-xs text-gray-500">ili</span>
+          <div class="flex-1 h-px bg-gray-300"></div>
+        </div>
+
+        <BaseButton
+          class="w-full flex gap-2 items-center justify-center"
+          variant="secondary"
+          @click="loginWithGoogle"
+        >
+          <img
+            src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
+            alt="Google logo"
+            class="size-6"
+          />
+          Prijava s Google računom
+        </BaseButton>
       </form>
 
       <p class="text-sm text-center text-gray-600">

@@ -140,6 +140,7 @@ const logoutFromMenu = () => {
 
             <!-- Change password -->
             <button
+              v-if="!auth.isGoogleUser"
               type="button"
               class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 transition"
               @click="openChangePassword"

@@ -9,6 +9,7 @@ import {
   apiGetUserProfile,
   apiChangeUsername,
   apiChangePassword,
+  apiLoginWithGoogle,
 } from '../api/auth'
 import { useWorkoutsStore } from './workouts'
 import { useAdminStore } from './admin'
@@ -26,6 +27,7 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isLoggedIn: (s) => !!s.firebaseUser,
     isAdmin: (s) => s.user?.role === 'ADMIN',
+    isGoogleUser: (s) => s.firebaseUser?.providerData?.some((p) => p.providerId === 'google.com'),
   },
 
   actions: {
@@ -93,6 +95,23 @@ export const useAuthStore = defineStore('auth', {
         return res
       } catch (e) {
         this.error = e?.message || 'Prijava nije uspjela.'
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async loginWithGoogle() {
+      this.loading = true
+      this.error = null
+
+      try {
+        const res = await apiLoginWithGoogle()
+        const profile = await apiGetUserProfile(res.user.uid)
+        this.user = profile
+        return res
+      } catch (e) {
+        this.error = e?.message || 'Google prijava nije uspjela.'
         throw e
       } finally {
         this.loading = false
