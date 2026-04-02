@@ -1,6 +1,8 @@
 <script setup>
-import { ref, watch, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount, computed } from 'vue'
 import { useAuthStore } from '../../stores/auth'
+import { getAuthErrorMessage } from '@/utils/authErrorMessages'
+
 import ConfirmModal from './ConfirmModal.vue'
 import BaseButton from './BaseButton.vue'
 
@@ -53,6 +55,12 @@ watch(
   },
 )
 
+watch([newPassword, confirmNewPassword], () => {
+  if (error.value) {
+    error.value = ''
+  }
+})
+
 onBeforeUnmount(() => {
   if (successTimer.value) clearTimeout(successTimer.value)
 })
@@ -70,13 +78,13 @@ const requestSubmit = () => {
     return
   }
 
-  if (newPassword.value.length < 8) {
-    error.value = 'Nova lozinka mora imati najmanje 8 znakova.'
+  if (newPassword.value !== confirmNewPassword.value) {
+    error.value = 'Nova lozinka i potvrda se ne podudaraju.'
     return
   }
 
-  if (newPassword.value !== confirmNewPassword.value) {
-    error.value = 'Nova lozinka i potvrda se ne podudaraju.'
+  if (!isPasswordValid.value) {
+    error.value = 'Lozinka mora zadovoljiti sva sigurnosna pravila.'
     return
   }
 
@@ -86,28 +94,20 @@ const requestSubmit = () => {
 const confirmSubmit = async () => {
   showConfirm.value = false
   loading.value = true
-  try {
-    const response = await auth.changePassword(newPassword.value)
+  error.value = ''
 
-    successMessage.value = response?.message || 'Lozinka uspješno promijenjena.'
+  try {
+    await auth.changePassword(newPassword.value)
+
+    successMessage.value = 'Lozinka uspješno promijenjena.'
     showSuccess.value = true
 
-    // auto-close nakon 2 sek
     if (successTimer.value) clearTimeout(successTimer.value)
     successTimer.value = setTimeout(() => {
       closeSuccess()
     }, 2000)
   } catch (e) {
-    const data = e?.response?.data
-
-    // express-validator wrapped: { error: { errors: [...] } }
-    if (data?.error?.errors?.length) {
-      error.value = data.error.errors[0].msg
-      return
-    }
-
-    // fallback
-    error.value = data?.message || data?.error || e?.message || 'Greška pri promjeni lozinke.'
+    error.value = getAuthErrorMessage(e, 'Greška pri promjeni lozinke.')
   } finally {
     loading.value = false
   }
@@ -125,6 +125,61 @@ const closeSuccess = () => {
   showSuccess.value = false
   emit('success') // Navbar redirect na /login
 }
+
+const passwordChecks = computed(() => {
+  const value = newPassword.value || ''
+
+  return {
+    minLength: value.length >= 8,
+    hasLowercase: /[a-z]/.test(value),
+    hasUppercase: /[A-Z]/.test(value),
+    hasNumber: /\d/.test(value),
+  }
+})
+
+const passedChecksCount = computed(() => {
+  return Object.values(passwordChecks.value).filter(Boolean).length
+})
+
+const passwordStrength = computed(() => {
+  const value = newPassword.value || ''
+
+  if (!value) {
+    return {
+      label: '',
+      level: 0,
+      widthClass: 'w-0',
+      barClass: 'bg-transparent',
+    }
+  }
+
+  if (passedChecksCount.value <= 2) {
+    return {
+      label: 'Slaba lozinka',
+      level: 1,
+      widthClass: 'w-1/3',
+      barClass: 'bg-red-500',
+    }
+  }
+
+  if (passedChecksCount.value <= 3) {
+    return {
+      label: 'Srednje jaka lozinka',
+      level: 2,
+      widthClass: 'w-2/3',
+      barClass: 'bg-yellow-500',
+    }
+  }
+
+  return {
+    label: 'Jaka lozinka',
+    level: 3,
+    widthClass: 'w-full',
+    barClass: 'bg-green-500',
+  }
+})
+
+const isPasswordValid = computed(() => passwordStrength.value.level === 3)
 </script>
 
 <template>
@@ -150,6 +205,7 @@ const closeSuccess = () => {
               class="w-full border rounded-xl px-3 py-2 pr-12"
               autocomplete="new-password"
             />
+
             <button
               type="button"
               class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg cursor-pointer hover:bg-gray-100"
@@ -192,6 +248,39 @@ const closeSuccess = () => {
                 <path d="m1 1 22 22" />
               </svg>
             </button>
+          </div>
+
+          <div v-if="newPassword" class="mt-2 space-y-2">
+            <div class="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+              <div
+                class="h-2 rounded-full transition-all duration-300"
+                :class="[passwordStrength.widthClass, passwordStrength.barClass]"
+              ></div>
+            </div>
+
+            <p
+              class="text-sm font-medium"
+              :class="{
+                'text-red-600': passwordStrength.level === 1,
+                'text-yellow-600': passwordStrength.level === 2,
+                'text-green-600': passwordStrength.level === 3,
+              }"
+            >
+              {{ passwordStrength.label }}
+            </p>
+
+            <ul class="text-xs space-y-1">
+              <li :class="passwordChecks.minLength ? 'text-green-600' : 'text-gray-500'">
+                • najmanje 8 znakova
+              </li>
+              <li :class="passwordChecks.hasLowercase ? 'text-green-600' : 'text-gray-500'">
+                • malo slovo
+              </li>
+              <li :class="passwordChecks.hasUppercase ? 'text-green-600' : 'text-gray-500'">
+                • veliko slovo
+              </li>
+              <li :class="passwordChecks.hasNumber ? 'text-green-600' : 'text-gray-500'">• broj</li>
+            </ul>
           </div>
         </div>
 
@@ -248,7 +337,7 @@ const closeSuccess = () => {
           </div>
         </div>
 
-        <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
+        <p v-if="error" class="text-sm text-red-600 whitespace-pre-line">{{ error }}</p>
 
         <div class="flex justify-end gap-2 pt-2">
           <BaseButton type="button" variant="secondary" @click="close" :disabled="loading">
