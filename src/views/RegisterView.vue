@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { getAuthErrorMessage } from '@/utils/authErrorMessages'
@@ -21,7 +21,6 @@ const formError = ref('')
 
 const passwordInputRef = ref(null)
 const repeatPasswordInputRef = ref(null)
-const emailInputRef = ref(null)
 const usernameInputRef = ref(null)
 
 const showSuccessModal = ref(false)
@@ -101,6 +100,60 @@ const closeSuccessModal = () => {
   showSuccessModal.value = false
   router.push('/login')
 }
+
+//helper funkcije za 'password strength' indikator
+const passwordChecks = computed(() => {
+  const value = password.value || ''
+
+  return {
+    minLength: value.length >= 8,
+    hasLowercase: /[a-z]/.test(value),
+    hasUppercase: /[A-Z]/.test(value),
+    hasNumber: /\d/.test(value),
+  }
+})
+
+const passedChecksCount = computed(() => {
+  return Object.values(passwordChecks.value).filter(Boolean).length
+})
+
+const passwordStrength = computed(() => {
+  const value = password.value || ''
+
+  if (!value) {
+    return {
+      label: '',
+      level: 0,
+      widthClass: 'w-0',
+      barClass: 'bg-transparent',
+    }
+  }
+
+  if (passedChecksCount.value <= 2) {
+    return {
+      label: 'Slaba lozinka',
+      level: 1,
+      widthClass: 'w-1/3',
+      barClass: 'bg-red-500',
+    }
+  }
+
+  if (passedChecksCount.value <= 3) {
+    return {
+      label: 'Srednje jaka lozinka',
+      level: 2,
+      widthClass: 'w-2/3',
+      barClass: 'bg-yellow-500',
+    }
+  }
+
+  return {
+    label: 'Jaka lozinka',
+    level: 3,
+    widthClass: 'w-full',
+    barClass: 'bg-green-500',
+  }
+})
 </script>
 
 <template>
@@ -132,6 +185,42 @@ const closeSuccessModal = () => {
           :modelValue="password"
           @update:modelValue="onPasswordInput"
         />
+
+        <!--Password strength indikator-->
+        <div v-if="password" class="space-y-2">
+          <div class="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+            <div
+              class="h-2 rounded-full transition-all duration-300"
+              :class="[passwordStrength.widthClass, passwordStrength.barClass]"
+            ></div>
+          </div>
+
+          <p
+            class="text-sm font-medium"
+            :class="{
+              'text-red-600': passwordStrength.level === 1,
+              'text-yellow-600': passwordStrength.level === 2,
+              'text-green-600': passwordStrength.level === 3,
+            }"
+          >
+            {{ passwordStrength.label }}
+          </p>
+
+          <ul class="text-sm space-y-1">
+            <li :class="passwordChecks.minLength ? 'text-green-600' : 'text-gray-500'">
+              • najmanje 8 znakova
+            </li>
+            <li :class="passwordChecks.hasLowercase ? 'text-green-600' : 'text-gray-500'">
+              • barem jedno malo slovo
+            </li>
+            <li :class="passwordChecks.hasUppercase ? 'text-green-600' : 'text-gray-500'">
+              • barem jedno veliko slovo
+            </li>
+            <li :class="passwordChecks.hasNumber ? 'text-green-600' : 'text-gray-500'">
+              • barem jedan broj
+            </li>
+          </ul>
+        </div>
 
         <BaseInput
           ref="repeatPasswordInputRef"
