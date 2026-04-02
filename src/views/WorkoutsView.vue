@@ -1,12 +1,14 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue'
 import { useWorkoutsStore } from '../stores/workouts'
+import { useAuthStore } from '@/stores/auth'
 
 import WorkoutForm from '../components/workouts/WorkoutForm.vue'
 import WorkoutList from '../components/workouts/WorkoutList.vue'
 import WorkoutsToolbar from '../components/workouts/WorkoutsToolbar.vue'
 
 const ws = useWorkoutsStore()
+const auth = useAuthStore()
 
 const mobileTab = ref('list') // 'form' | 'list'
 
@@ -87,6 +89,15 @@ const filteredWorkouts = computed(() => {
 </script>
 
 <template>
+  <div class="px-0 mb-4">
+    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">
+      Dobro došao,
+      <span class="text-blue-600">
+        {{ auth.user?.username || 'korisniče' }}
+      </span>
+    </h1>
+  </div>
+
   <!-- Mobile/Tablet tabs -->
   <div class="mb-4 flex gap-2 lg:hidden">
     <button
