@@ -1,7 +1,7 @@
 <script setup>
 import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 
 import ConfirmModal from '../components/ui/ConfirmModal.vue'
 import ChangePasswordModal from './ui/ChangePasswordModal.vue'
@@ -10,6 +10,7 @@ import ChangeUsernameModal from './ui/ChangeUsernameModal.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 // Logout confirm
 const showLogoutConfirm = ref(false)
@@ -47,7 +48,9 @@ const onDocClick = (e) => {
   }
 }
 
-onMounted(() => document.addEventListener('click', onDocClick))
+onMounted(() => {
+  document.addEventListener('click', onDocClick)
+})
 onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 
 const openChangePassword = () => {
@@ -87,10 +90,14 @@ const logoutFromMenu = () => {
   showProfileMenu.value = false
   requestLogout()
 }
+
+const isAdminRoute = computed(() => route.path === '/admin')
 </script>
 
 <template>
-  <header class="border-b">
+  <header
+    class="border-b bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 dark:border-gray-800 transition-colors"
+  >
     <div class="p-4 flex items-center justify-between">
       <router-link to="/workouts" class="font-bold text-3xl">WorkoutLog</router-link>
 
@@ -102,37 +109,43 @@ const logoutFromMenu = () => {
         <BaseButton
           v-if="auth.isLoggedIn && auth.isAdmin"
           as="router-link"
-          to="/admin"
+          :to="isAdminRoute ? '/workouts' : '/admin'"
           variant="secondary"
         >
-          Admin
+          {{ isAdminRoute ? '← Workouts' : 'Admin' }}
         </BaseButton>
 
         <!-- PROFILE DROPDOWN (samo kad je user ulogiran) -->
+
+        <!--Promjena teme - dark/light theme -->
+        <BaseButton v-if="auth.isLoggedIn" variant="secondary" @click="auth.toggleTheme">
+          {{ auth.currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark' }}
+        </BaseButton>
+
         <div v-if="auth.isLoggedIn" class="profile-menu-wrapper relative flex items-center gap-3">
           <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> Profile </BaseButton>
 
           <div
             v-if="showProfileMenu"
-            class="absolute right-0 top-12 w-72 bg-white border rounded-2xl shadow-lg p-2 z-50"
+            class="absolute right-0 top-12 w-72 bg-white border rounded-2xl shadow-lg p-2 z-50 dark:bg-gray-900 dark:border-gray-700"
           >
             <!-- Username -->
-            <div class="px-3 py-2 text-sm text-gray-600">
-              <div class="text-xs text-gray-400">Username</div>
+            <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
+              <div class="text-xs text-gray-400 dark:text-gray-500">Username</div>
               <div class="font-semibold break-all">{{ auth.user?.username || '-' }}</div>
             </div>
 
             <!-- Email -->
-            <div class="px-3 py-2 text-sm text-gray-600">
-              <div class="text-xs text-gray-400">Email</div>
+            <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
+              <div class="text-xs text-gray-400 dark:text-gray-500">Email</div>
               <div class="font-mono break-all">{{ auth.user?.email || '-' }}</div>
             </div>
 
-            <div class="my-2 border-t"></div>
+            <div class="my-2 border-t dark:border-gray-700"></div>
 
             <button
               type="button"
-              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 transition"
+              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               @click="openChangeUsername"
             >
               Promijeni username
@@ -142,7 +155,7 @@ const logoutFromMenu = () => {
             <button
               v-if="!auth.isGoogleUser"
               type="button"
-              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 transition"
+              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               @click="openChangePassword"
             >
               Promijeni lozinku
@@ -151,7 +164,7 @@ const logoutFromMenu = () => {
             <!-- Logout (otvara ConfirmModal) -->
             <button
               type="button"
-              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 transition text-red-600"
+              class="w-full text-left px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition text-red-600 dark:text-red-400"
               @click="logoutFromMenu"
             >
               Logout

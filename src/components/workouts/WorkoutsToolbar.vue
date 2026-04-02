@@ -55,7 +55,7 @@ const typesLabel = computed(() => {
     <div class="flex items-center justify-between gap-2 lg:hidden">
       <button
         type="button"
-        class="rounded-full border px-2 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm font-semibold cursor-pointer"
+        class="rounded-full border px-2 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm font-semibold cursor-pointer bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
         @click="showFiltersMobile = !showFiltersMobile"
       >
         {{ showFiltersMobile ? 'Sakrij filtere' : 'Prikaži filtere' }}
@@ -63,7 +63,7 @@ const typesLabel = computed(() => {
 
       <div class="flex gap-2 items-center">
         <select
-          class="border rounded-full px-2 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm cursor-pointer"
+          class="border rounded-full px-2 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm cursor-pointer bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
           :value="modelValue.sort"
           @change="update({ sort: $event.target.value })"
         >
@@ -83,15 +83,14 @@ const typesLabel = computed(() => {
         <div class="grid grid-cols-1 md:grid-cols-6 gap-3 w-full">
           <!-- Type -->
           <div class="relative">
-            <label class="block text-sm font-medium text-gray-700">Type</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Type</label>
 
             <button
               type="button"
-              class="w-full mt-1 border border-gray-300 cursor-pointer rounded-lg px-3 py-2 flex items-center justify-between bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              @click="openTypes = !openTypes"
+              class="w-full mt-1 border border-gray-300 dark:border-gray-600 cursor-pointer rounded-lg px-3 py-2 flex items-center justify-between bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
-              <span class="text-sm text-gray-900">{{ typesLabel }}</span>
-              <span class="text-gray-500 text-xs">▾</span>
+              <span class="text-sm text-gray-900 dark:text-gray-100">{{ typesLabel }}</span>
+              <span class="text-gray-500 dark:text-gray-400 text-xs">▾</span>
             </button>
 
             <!-- overlay za klik izvan -->
@@ -99,19 +98,19 @@ const typesLabel = computed(() => {
 
             <div
               v-if="openTypes"
-              class="absolute mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-20"
+              class="absolute mt-2 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2 z-20"
             >
               <div class="flex justify-between gap-2 mb-2">
                 <button
                   type="button"
-                  class="text-xs px-2 py-1 cursor-pointer rounded border border-gray-300 hover:bg-gray-50"
+                  class="text-xs px-2 py-1 cursor-pointer rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
                   @click="selectAllTypes"
                 >
                   Select all
                 </button>
                 <button
                   type="button"
-                  class="text-xs px-2 py-1 cursor-pointer rounded border border-gray-300 hover:bg-gray-50"
+                  class="text-xs px-2 py-1 cursor-pointer rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
                   @click="clearTypes"
                 >
                   Clear
@@ -122,7 +121,7 @@ const typesLabel = computed(() => {
                 <label
                   v-for="t in availableTypes"
                   :key="t"
-                  class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                  class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -130,14 +129,14 @@ const typesLabel = computed(() => {
                     :checked="modelValue.types?.includes(t)"
                     @change="toggleType(t)"
                   />
-                  <span class="text-sm">{{ t }}</span>
+                  <span class="text-sm text-gray-900 dark:text-gray-100">{{ t }}</span>
                 </label>
               </div>
 
               <div class="pt-2 flex justify-end">
                 <button
                   type="button"
-                  class="text-sm px-3 py-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700"
+                  class="text-sm px-3 py-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   @click="openTypes = false"
                 >
                   OK
@@ -160,13 +159,13 @@ const typesLabel = computed(() => {
           />
 
           <BaseInput
-            label="Min min"
+            label="Min minutes"
             type="number"
             :modelValue="modelValue.minDur"
             @update:modelValue="(v) => update({ minDur: v })"
           />
           <BaseInput
-            label="Max min"
+            label="Max minutes"
             type="number"
             :modelValue="modelValue.maxDur"
             @update:modelValue="(v) => update({ maxDur: v })"
@@ -176,7 +175,7 @@ const typesLabel = computed(() => {
         <!-- DESKTOP ONLY: sort+reset (na mobu je gore u headeru) -->
         <div class="hidden lg:flex gap-2 items-center">
           <select
-            class="border rounded-full px-3 py-2 text-sm cursor-pointer"
+            class="border rounded-full px-3 py-2 text-sm cursor-pointer bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
             :value="modelValue.sort"
             @change="update({ sort: $event.target.value })"
           >

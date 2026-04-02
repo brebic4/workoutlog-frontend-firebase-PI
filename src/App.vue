@@ -1,22 +1,24 @@
 <script setup>
 import InfoModal from './components/ui/InfoModal.vue'
 import Navbar from './components/Navbar.vue'
+
 import { useAuthStore } from './stores/auth'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const auth = useAuthStore()
 
-const handleSessionExpiredClose = () => {
+const handleSessionExpiredClose = async () => {
   auth.setSessionExpired(false)
-  auth.logout()
+  await auth.logout()
   router.push('/login')
 }
-
-const auth = useAuthStore()
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div
+    class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors"
+  >
     <Navbar />
     <main class="p-6">
       <router-view />

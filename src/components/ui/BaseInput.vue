@@ -31,11 +31,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const inputClasses = computed(() => {
-  const base = 'w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2'
+  const base =
+    'w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
 
   const errorClasses = props.error
-    ? 'border-red-500 focus:ring-red-300'
-    : 'border-gray-300 focus:ring-blue-300'
+    ? 'border-red-500 focus:ring-red-300 dark:border-red-400 dark:focus:ring-red-400'
+    : 'border-gray-300 focus:ring-blue-300 dark:border-gray-600 dark:focus:ring-blue-400'
 
   const rightPadding = isPassword.value ? ' pr-10' : ''
 
@@ -66,7 +67,7 @@ watch(
 
 <template>
   <div class="flex flex-col gap-1">
-    <label v-if="label" class="text-sm font-medium text-gray-700">
+    <label v-if="label" class="text-sm font-medium text-gray-700 dark:text-gray-200">
       {{ label }}
     </label>
 
@@ -91,7 +92,7 @@ watch(
       <button
         v-if="isPassword"
         type="button"
-        class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md cursor-pointer hover:bg-gray-100"
+        class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
         @click="togglePassword"
         :aria-label="showPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'"
       >
@@ -105,7 +106,7 @@ watch(
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="w-5 h-5 text-gray-600"
+          class="w-5 h-5 text-gray-600 dark:text-gray-300"
         >
           <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
           <circle cx="12" cy="12" r="3" />
@@ -121,7 +122,7 @@ watch(
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="w-5 h-5 text-gray-600"
+          class="w-5 h-5 text-gray-600 dark:text-gray-300"
         >
           <path
             d="M10.733 5.08A10.744 10.744 0 0 1 12 5c6.5 0 10 7 10 7a18.16 18.16 0 0 1-1.67 2.68"
@@ -133,6 +134,6 @@ watch(
       </button>
     </div>
 
-    <p v-if="error" class="text-sm text-red-500">{{ error }}</p>
+    <p v-if="error" class="text-sm text-red-500 dark:text-red-400">{{ error }}</p>
   </div>
 </template>

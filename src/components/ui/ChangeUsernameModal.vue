@@ -76,7 +76,7 @@ const submit = () => {
         @update:modelValue="onUsernameInput"
       />
 
-      <p v-if="formError" class="text-sm font-bold text-red-600">
+      <p v-if="formError" class="text-sm font-bold text-red-600 dark:text-gray-400">
         {{ formError }}
       </p>
 

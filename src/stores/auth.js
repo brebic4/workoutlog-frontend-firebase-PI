@@ -13,6 +13,8 @@ import {
 } from '../api/auth'
 import { useWorkoutsStore } from './workouts'
 import { useAdminStore } from './admin'
+import { apiChangeTheme } from '../api/auth'
+import { applyTheme } from '../utils/theme'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -28,6 +30,7 @@ export const useAuthStore = defineStore('auth', {
     isLoggedIn: (s) => !!s.firebaseUser,
     isAdmin: (s) => s.user?.role === 'ADMIN',
     isGoogleUser: (s) => s.firebaseUser?.providerData?.some((p) => p.providerId === 'google.com'),
+    currentTheme: (s) => s.user?.theme || 'light',
   },
 
   actions: {
@@ -43,12 +46,14 @@ export const useAuthStore = defineStore('auth', {
             try {
               const profile = await apiGetUserProfile(firebaseUser.uid)
               this.user = profile
+              applyTheme(profile?.theme || 'light')
             } catch (e) {
               this.user = null
               this.error = e.message
             }
           } else {
             this.user = null
+            applyTheme('light')
           }
 
           this.authReady = true
@@ -180,6 +185,31 @@ export const useAuthStore = defineStore('auth', {
 
     setSessionExpired(value) {
       this.sessionExpired = value
+    },
+
+    async toggleTheme() {
+      if (!this.firebaseUser || !this.user) return
+
+      const newTheme = this.user.theme === 'dark' ? 'light' : 'dark'
+
+      this.loading = true
+      this.error = null
+
+      try {
+        await apiChangeTheme(this.firebaseUser.uid, newTheme)
+
+        this.user = {
+          ...this.user,
+          theme: newTheme,
+        }
+
+        applyTheme(newTheme)
+      } catch (e) {
+        this.error = e?.message || 'Promjena teme nije uspjela.'
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
   },
 })

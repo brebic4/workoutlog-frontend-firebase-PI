@@ -57,21 +57,23 @@ const saveEdit = async (payload) => {
 </script>
 
 <template>
-  <div class="border rounded-xl p-4 bg-white shadow-sm" :class="highlighted ? 'flash' : ''">
+  <div
+    class="border rounded-xl p-4 bg-white shadow-sm text-gray-900 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+    :class="highlighted ? 'flash' : ''"
+  >
     <div class="flex items-start justify-between gap-4">
       <div>
         <p class="font-bold">{{ workout.type }}</p>
-        <p class="text-sm text-gray-600">
+        <p class="text-sm text-gray-600 dark:text-gray-300">
           {{ formatDate(workout.date) }} • {{ workout.durationMin }} min
         </p>
-        <p v-if="workout.notes" class="text-sm mt-2 text-gray-700">
+        <p v-if="workout.notes" class="text-sm mt-2 text-gray-700 dark:text-gray-300">
           {{ workout.notes }}
         </p>
       </div>
 
       <div class="flex gap-2">
         <BaseButton variant="secondary" @click="openEdit"> Update </BaseButton>
-
         <BaseButton variant="danger" @click="requestDelete"> Delete </BaseButton>
       </div>
 
@@ -97,7 +99,7 @@ const saveEdit = async (payload) => {
 <style scoped>
 .flash {
   animation: flash 900ms ease;
-  border-color: rgba(59, 130, 246, 0.9); /* blue-500 */
+  border-color: rgba(59, 130, 246, 0.9);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 

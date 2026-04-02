@@ -33,7 +33,6 @@ const saveEdit = async (payload) => {
   editLoading.value = true
   try {
     await admin.updateAdminWorkout(editTarget.value.id, payload)
-    // refresh lista + stats
     await Promise.all([admin.fetchAdminWorkouts(), admin.fetchAdminStats()])
     closeEdit()
   } finally {
@@ -54,6 +53,7 @@ const setRange = async (r) => {
 
 const showDeleteConfirm = ref(false)
 const deleteTargetId = ref(null)
+
 const filtered = computed(() => {
   let list = [...(admin.workouts || [])]
 
@@ -105,22 +105,17 @@ const cancelDelete = () => {
   deleteTargetId.value = null
 }
 
-// helper: date format
 const fmtDate = (d) => {
   if (!d) return ''
   const dt = new Date(d)
   return isNaN(dt.getTime()) ? String(d) : dt.toLocaleDateString()
 }
 
-// stats helpers
 const total = computed(() => admin.stats?.totalWorkouts ?? 0)
 const totalMinutes = computed(() => admin.stats?.totalMinutes ?? 0)
 const avgMinutes = computed(() => admin.stats?.avgMinutesPerWorkout ?? 0)
-
 const topType = computed(() => admin.stats?.topType ?? '-')
-
 const mostActive = computed(() => admin.stats?.mostActiveUser ?? null)
-
 const durationBuckets = computed(() => admin.stats?.durationBuckets ?? [])
 
 const typeBars = computed(() => {
@@ -154,12 +149,16 @@ const reset = () => {
           </BaseButton>
         </div>
 
-        <div class="flex bg-gray-100 rounded-xl p-1 w-fit">
+        <div class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 w-fit">
           <button
             v-for="r in ranges"
             :key="r.key"
             class="px-2 py-1 text-xs sm:px-3 sm:py-1 rounded-lg sm:text-sm"
-            :class="admin.statsRange === r.key ? 'bg-white shadow font-bold' : 'text-gray-600'"
+            :class="
+              admin.statsRange === r.key
+                ? 'bg-white dark:bg-gray-900 shadow font-bold text-gray-900 dark:text-gray-100'
+                : 'text-gray-600 dark:text-gray-300'
+            "
             @click="setRange(r.key)"
             type="button"
           >
@@ -169,109 +168,115 @@ const reset = () => {
       </div>
     </div>
 
-    <!-- Errors -->
-    <p v-if="admin.error" class="text-sm font-bold text-red-600">
+    <p v-if="admin.error" class="text-sm font-bold text-red-600 dark:text-red-400">
       {{ admin.error }}
     </p>
 
-    <!-- STATS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <BaseCard>
-        <p class="text-sm text-gray-600">Ukupno workouta</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Ukupno workouta</p>
         <p class="text-2xl font-bold">{{ total }}</p>
       </BaseCard>
 
       <BaseCard>
-        <p class="text-sm text-gray-600">Najčešći type</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Najčešći type</p>
         <p class="text-2xl font-bold">{{ topType }}</p>
       </BaseCard>
 
       <BaseCard>
-        <p class="text-sm text-gray-600">Ukupno minuta</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Ukupno minuta</p>
         <p class="text-2xl font-bold">{{ totalMinutes }}</p>
-        <p class="text-xs text-gray-500 mt-1">Prosjek: {{ avgMinutes }} min/workout</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Prosjek: {{ avgMinutes }} min/workout
+        </p>
       </BaseCard>
 
       <BaseCard>
-        <p class="text-sm text-gray-600">Najaktivniji user</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Najaktivniji user</p>
         <p class="text-sm font-mono" v-if="mostActive?.email">{{ mostActive.email }}</p>
-        <p class="text-sm text-gray-600" v-else>-</p>
-        <p class="text-xs text-gray-500 mt-1" v-if="mostActive">
+        <p class="text-sm text-gray-600 dark:text-gray-300" v-else>-</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" v-if="mostActive">
           {{ mostActive.minutes }} min • {{ mostActive.workouts }} workouta
         </p>
       </BaseCard>
     </div>
 
-    <!-- ByType distribution -->
     <BaseCard class="space-y-3">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-bold">Raspodjela po tipu (Top 6)</h3>
       </div>
 
-      <div v-if="admin.loadingStats" class="text-gray-600">Učitavanje statistike...</div>
+      <div v-if="admin.loadingStats" class="text-gray-600 dark:text-gray-300">
+        Učitavanje statistike...
+      </div>
 
       <div v-else class="space-y-2">
         <div v-for="b in typeBars" :key="b.label" class="space-y-1">
           <div class="flex items-center justify-between text-sm">
             <span class="font-medium">{{ b.label }}</span>
-            <span class="text-gray-600">{{ b.count }}</span>
+            <span class="text-gray-600 dark:text-gray-300">{{ b.count }}</span>
           </div>
-          <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-2 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
             <div class="h-2 bg-blue-500" :style="{ width: b.pct + '%' }"></div>
           </div>
         </div>
 
-        <p v-if="!typeBars.length" class="text-gray-600 text-sm">Nema podataka.</p>
+        <p v-if="!typeBars.length" class="text-gray-600 dark:text-gray-300 text-sm">
+          Nema podataka.
+        </p>
       </div>
     </BaseCard>
 
     <BaseCard class="space-y-3">
       <h3 class="text-lg font-bold">Trajanje workouta</h3>
 
-      <div v-if="admin.loadingStats" class="text-gray-600">Učitavanje...</div>
+      <div v-if="admin.loadingStats" class="text-gray-600 dark:text-gray-300">Učitavanje...</div>
 
-      <div v-else class="overflow-x-auto border rounded-xl">
+      <div v-else class="overflow-x-auto border rounded-xl dark:border-gray-700">
         <table class="min-w-105 w-full text-sm">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Trajanje</th>
               <th class="text-right px-3 py-2 sm:px-4 sm:py-3">Broj workouta</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="b in durationBuckets" :key="b.label" class="border-t">
+            <tr v-for="b in durationBuckets" :key="b.label" class="border-t dark:border-gray-700">
               <td class="px-4 py-3 font-medium">{{ b.label }} min</td>
               <td class="px-4 py-3 text-right">{{ b.count }}</td>
             </tr>
-            <tr v-if="!durationBuckets.length" class="border-t">
-              <td class="px-4 py-3 text-gray-600" colspan="2">Nema podataka.</td>
+            <tr v-if="!durationBuckets.length" class="border-t dark:border-gray-700">
+              <td class="px-4 py-3 text-gray-600 dark:text-gray-300" colspan="2">Nema podataka.</td>
             </tr>
           </tbody>
         </table>
       </div>
     </BaseCard>
 
-    <!-- FILTERS + TABLE -->
     <BaseCard class="space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-bold">Svi treninzi</h3>
-        <p class="text-sm text-gray-600">Prikaz: {{ filtered.length }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Prikaz: {{ filtered.length }}</p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Filter email</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+            Filter email
+          </label>
           <input
             v-model="filters.email"
-            class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2"
+            class="w-full mt-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
             placeholder="example@example.com"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Filter type</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+            Filter type
+          </label>
           <select
-            class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-white"
+            class="w-full mt-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
             v-model="filters.type"
           >
             <option value="">Svi</option>
@@ -279,16 +284,16 @@ const reset = () => {
           </select>
         </div>
 
-        <div class="flex items-end sm:justify-end">
+        <div class="flex items-end lg:justify-end">
           <BaseButton variant="secondary" class="w-full sm:w-auto" @click="reset">
             Reset filtera
           </BaseButton>
         </div>
       </div>
 
-      <div class="overflow-x-auto border rounded-xl">
+      <div class="overflow-x-auto border rounded-xl dark:border-gray-700">
         <table class="min-w-225 w-full text-sm">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Datum</th>
               <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Email</th>
@@ -301,19 +306,25 @@ const reset = () => {
 
           <tbody>
             <tr v-if="admin.loadingWorkouts">
-              <td class="px-4 py-3 text-gray-600" colspan="6">Učitavanje...</td>
+              <td class="px-4 py-3 text-gray-600 dark:text-gray-300" colspan="6">Učitavanje...</td>
             </tr>
 
             <tr v-else-if="!filtered.length">
-              <td class="px-4 py-3 text-gray-600" colspan="6">Nema rezultata.</td>
+              <td class="px-4 py-3 text-gray-600 dark:text-gray-300" colspan="6">
+                Nema rezultata.
+              </td>
             </tr>
 
-            <tr v-else v-for="w in filtered" :key="w.id" class="border-t">
+            <tr v-else v-for="w in filtered" :key="w.id" class="border-t dark:border-gray-700">
               <td class="px-4 py-3">{{ fmtDate(w.date) }}</td>
-              <td class="px-4 py-3 font-mono text-xs">{{ w.userEmail || '-' }}</td>
+              <td class="px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300">
+                {{ w.userEmail || '-' }}
+              </td>
               <td class="px-4 py-3 font-medium">{{ w.type }}</td>
               <td class="px-4 py-3">{{ w.durationMin }} min</td>
-              <td class="px-4 py-3 max-w-90 truncate">{{ w.notes }}</td>
+              <td class="px-4 py-3 max-w-90 truncate text-gray-700 dark:text-gray-300">
+                {{ w.notes }}
+              </td>
               <td class="px-4 py-3 text-right">
                 <div class="flex flex-col sm:flex-row justify-end gap-2">
                   <BaseButton variant="secondary" size="sm" @click="requestEdit(w)">

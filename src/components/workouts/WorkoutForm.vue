@@ -111,7 +111,7 @@ const submit = async () => {
       />
 
       <Transition name="fade-slide">
-        <p v-if="error" class="text-sm font-bold text-red-600">{{ error }}</p>
+        <p v-if="error" class="text-sm font-bold text-red-600 dark:text-red-400">{{ error }}</p>
       </Transition>
 
       <BaseButton class="w-full" type="submit"> Spremi </BaseButton>

@@ -93,3 +93,12 @@ export const apiChangePassword = async (newPassword) => {
 
   return await updatePassword(auth.currentUser, newPassword)
 }
+
+export const apiChangeTheme = async (uid, theme) => {
+  const ref = doc(db, 'users', uid)
+
+  await updateDoc(ref, {
+    theme,
+    updatedAt: serverTimestamp(),
+  })
+}

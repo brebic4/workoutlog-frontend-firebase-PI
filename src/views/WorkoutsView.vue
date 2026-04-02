@@ -101,8 +101,12 @@ const filteredWorkouts = computed(() => {
   <!-- Mobile/Tablet tabs -->
   <div class="mb-4 flex gap-2 lg:hidden">
     <button
-      class="flex-1 rounded-lg border px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold cursor-pointer"
-      :class="mobileTab === 'form' ? 'bg-blue-600 text-white' : 'bg-white'"
+      class="flex-1 rounded-lg border px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold cursor-pointer transition-colors"
+      :class="
+        mobileTab === 'form'
+          ? 'bg-blue-600 text-white border-blue-600'
+          : 'bg-white text-gray-900 border-gray-300 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700'
+      "
       @click="mobileTab = 'form'"
     >
       Dodaj
@@ -110,7 +114,11 @@ const filteredWorkouts = computed(() => {
 
     <button
       class="flex-1 rounded-lg border px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold cursor-pointer"
-      :class="mobileTab === 'list' ? 'bg-blue-600 text-white' : 'bg-white'"
+      :class="
+        mobileTab === 'list'
+          ? 'bg-blue-600 text-white border-blue-600'
+          : 'bg-white text-gray-900 border-gray-300 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700'
+      "
       @click="mobileTab = 'list'"
     >
       Moji workouti

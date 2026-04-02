@@ -21,13 +21,13 @@ const emit = defineEmits(['delete', 'update'])
     </div>
 
     <TransitionGroup name="list" tag="div" class="space-y-3 relative">
-      <div v-if="loading" key="loading" class="text-gray-600">Učitavanje...</div>
+      <div v-if="loading" key="loading" class="text-gray-600 dark:text-gray-300">Učitavanje...</div>
 
-      <div v-else-if="error" key="error" class="text-red-600 font-bold text-sm">
+      <div v-else-if="error" key="error" class="text-red-600 dark:text-red-400 font-bold text-sm">
         {{ error }}
       </div>
 
-      <div v-else-if="!workouts.length" key="empty" class="text-gray-600">
+      <div v-else-if="!workouts.length" key="empty" class="text-gray-600 dark:text-gray-300">
         Nema workouta još. Dodaj prvi. 💪
       </div>
 
