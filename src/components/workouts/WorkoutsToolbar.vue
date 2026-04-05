@@ -88,6 +88,7 @@ const typesLabel = computed(() => {
             <button
               type="button"
               class="w-full mt-1 border border-gray-300 dark:border-gray-600 cursor-pointer rounded-lg px-3 py-2 flex items-center justify-between bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              @click="openTypes = !openTypes"
             >
               <span class="text-sm text-gray-900 dark:text-gray-100">{{ typesLabel }}</span>
               <span class="text-gray-500 dark:text-gray-400 text-xs">▾</span>

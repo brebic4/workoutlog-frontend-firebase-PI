@@ -133,7 +133,7 @@ const closeMobileMenu = () => {
           variant="secondary"
           class="hidden sm:inline-flex"
         >
-          {{ isAdminRoute ? '← Workouts' : 'Admin' }}
+          {{ isAdminRoute ? '← Workouts' : '🛡️Admin' }}
         </BaseButton>
 
         <!--Dashboard-->
@@ -144,7 +144,7 @@ const closeMobileMenu = () => {
           variant="secondary"
           class="hidden sm:inline-flex"
         >
-          {{ isDashBoardVisible ? '← Workouts' : 'Dashboard' }}
+          {{ isDashBoardVisible ? '← Workouts' : '📊Dashboard' }}
         </BaseButton>
 
         <div v-if="auth.isLoggedIn" class="profile-menu-wrapper flex items-center gap-3">
@@ -164,7 +164,7 @@ const closeMobileMenu = () => {
                   class="w-full"
                   @click="closeMobileMenu"
                 >
-                  Dashboard
+                  📊Dashboard
                 </BaseButton>
 
                 <BaseButton
@@ -175,13 +175,13 @@ const closeMobileMenu = () => {
                   class="w-full"
                   @click="closeMobileMenu"
                 >
-                  Admin
+                  🛡️Admin
                 </BaseButton>
               </div>
             </div>
           </div>
 
-          <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> Profile </BaseButton>
+          <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> 👤Profile </BaseButton>
 
           <div
             v-if="showProfileMenu"
