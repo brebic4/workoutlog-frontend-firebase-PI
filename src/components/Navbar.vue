@@ -12,6 +12,9 @@ const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
+const isAdminRoute = computed(() => route.path === '/admin')
+const isDashBoardVisible = computed(() => route.path === '/dashboard')
+
 // Logout confirm
 const showLogoutConfirm = ref(false)
 
@@ -45,6 +48,10 @@ const onDocClick = (e) => {
   const el = e.target
   if (!el.closest?.('.profile-menu-wrapper')) {
     showProfileMenu.value = false
+  }
+
+  if (!el.closest?.('.mobile-nav-wrapper')) {
+    showMobileMenu.value = false
   }
 }
 
@@ -91,8 +98,16 @@ const logoutFromMenu = () => {
   requestLogout()
 }
 
-const isAdminRoute = computed(() => route.path === '/admin')
-const isDashBoardVisible = computed(() => route.path === '/dashboard')
+//Meni za Admin i Dashboard buttons za mobile
+const showMobileMenu = ref(false)
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+}
 </script>
 
 <template>
@@ -109,27 +124,63 @@ const isDashBoardVisible = computed(() => route.path === '/dashboard')
 
         <!-- samo kad je user ulogiran -->
 
+        <!-- Desktop navigacija: od sm naviše -->
         <!--Admin-->
         <BaseButton
           v-if="auth.isLoggedIn && auth.isAdmin"
           as="router-link"
           :to="isAdminRoute ? '/workouts' : '/admin'"
           variant="secondary"
+          class="hidden sm:inline-flex"
         >
           {{ isAdminRoute ? '← Workouts' : 'Admin' }}
         </BaseButton>
 
-        <!--Dashboard Stats-->
+        <!--Dashboard-->
         <BaseButton
           v-if="auth.isLoggedIn"
           as="router-link"
           :to="isDashBoardVisible ? '/workouts' : '/dashboard'"
           variant="secondary"
+          class="hidden sm:inline-flex"
         >
           {{ isDashBoardVisible ? '← Workouts' : 'Dashboard' }}
         </BaseButton>
 
         <div v-if="auth.isLoggedIn" class="profile-menu-wrapper flex items-center gap-3">
+          <!-- Mobile menu: ispod sm -->
+          <div v-if="auth.isLoggedIn" class="mobile-nav-wrapper sm:hidden relative">
+            <BaseButton variant="secondary" @click.stop="toggleMobileMenu"> Menu </BaseButton>
+
+            <div
+              v-if="showMobileMenu"
+              class="absolute -right-18 top-full mt-2 w-48 rounded-2xl border bg-white shadow-lg p-2 z-50 dark:bg-gray-900 dark:border-gray-700"
+            >
+              <div class="flex flex-col gap-2">
+                <BaseButton
+                  as="router-link"
+                  to="/dashboard"
+                  variant="secondary"
+                  class="w-full"
+                  @click="closeMobileMenu"
+                >
+                  Dashboard
+                </BaseButton>
+
+                <BaseButton
+                  v-if="auth.isAdmin"
+                  as="router-link"
+                  to="/admin"
+                  variant="secondary"
+                  class="w-full"
+                  @click="closeMobileMenu"
+                >
+                  Admin
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+
           <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> Profile </BaseButton>
 
           <div
