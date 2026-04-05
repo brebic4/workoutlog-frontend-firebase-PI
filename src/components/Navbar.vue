@@ -92,6 +92,7 @@ const logoutFromMenu = () => {
 }
 
 const isAdminRoute = computed(() => route.path === '/admin')
+const isDashBoardVisible = computed(() => route.path === '/dashboard')
 </script>
 
 <template>
@@ -106,6 +107,9 @@ const isAdminRoute = computed(() => route.path === '/admin')
 
         <BaseButton v-if="!auth.isLoggedIn" as="router-link" to="/register"> Register </BaseButton>
 
+        <!-- samo kad je user ulogiran -->
+
+        <!--Admin-->
         <BaseButton
           v-if="auth.isLoggedIn && auth.isAdmin"
           as="router-link"
@@ -115,19 +119,22 @@ const isAdminRoute = computed(() => route.path === '/admin')
           {{ isAdminRoute ? '← Workouts' : 'Admin' }}
         </BaseButton>
 
-        <!-- PROFILE DROPDOWN (samo kad je user ulogiran) -->
-
-        <!--Promjena teme - dark/light theme -->
-        <BaseButton v-if="auth.isLoggedIn" variant="secondary" @click="auth.toggleTheme">
-          {{ auth.currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark' }}
+        <!--Dashboard Stats-->
+        <BaseButton
+          v-if="auth.isLoggedIn"
+          as="router-link"
+          :to="isDashBoardVisible ? '/workouts' : '/dashboard'"
+          variant="secondary"
+        >
+          {{ isDashBoardVisible ? '← Workouts' : 'Dashboard' }}
         </BaseButton>
 
-        <div v-if="auth.isLoggedIn" class="profile-menu-wrapper relative flex items-center gap-3">
+        <div v-if="auth.isLoggedIn" class="profile-menu-wrapper flex items-center gap-3">
           <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> Profile </BaseButton>
 
           <div
             v-if="showProfileMenu"
-            class="absolute right-0 top-12 w-72 bg-white border rounded-2xl shadow-lg p-2 z-50 dark:bg-gray-900 dark:border-gray-700"
+            class="absolute right-2 top-15 w-75 bg-white border rounded-2xl shadow-lg p-2 z-50 dark:bg-gray-900 dark:border-gray-700"
           >
             <!-- Username -->
             <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
@@ -171,6 +178,16 @@ const isAdminRoute = computed(() => route.path === '/admin')
             </button>
           </div>
         </div>
+
+        <!--Promjena teme - dark/light theme -->
+        <BaseButton
+          v-if="auth.isLoggedIn"
+          variant="secondary"
+          class="relative"
+          @click="auth.toggleTheme"
+        >
+          {{ auth.currentTheme === 'dark' ? '☀️' : '🌙' }}
+        </BaseButton>
       </nav>
     </div>
   </header>
