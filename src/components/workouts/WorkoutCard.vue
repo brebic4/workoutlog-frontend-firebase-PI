@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
 import ConfirmModal from '../ui/ConfirmModal.vue'
 import EditWorkoutModal from './EditWorkoutModal.vue'
+import SaveAsTemplateModal from './SaveAsTemplateModal.vue'
+import { useTemplatesStore } from '../../stores/templates'
 
 const props = defineProps({
   workout: Object,
@@ -14,7 +16,14 @@ const props = defineProps({
 
 const emit = defineEmits(['delete', 'update'])
 
+const ts = useTemplatesStore()
+
 const showDeleteConfirm = ref(false)
+const showEdit = ref(false)
+const saving = ref(false)
+
+const showTemplateModal = ref(false)
+const templateLoading = ref(false)
 
 const formatDate = (d) => {
   if (!d) return ''
@@ -35,12 +44,10 @@ const cancelDelete = () => {
   showDeleteConfirm.value = false
 }
 
-const showEdit = ref(false)
-const saving = ref(false)
-
 const openEdit = () => {
   showEdit.value = true
 }
+
 const closeEdit = () => {
   showEdit.value = false
 }
@@ -54,6 +61,31 @@ const saveEdit = async (payload) => {
     saving.value = false
   }
 }
+
+const openTemplateModal = () => {
+  showTemplateModal.value = true
+}
+
+const closeTemplateModal = () => {
+  showTemplateModal.value = false
+}
+
+const saveAsTemplate = async (templateName) => {
+  templateLoading.value = true
+
+  try {
+    await ts.createTemplate({
+      name: templateName,
+      type: props.workout?.type || '',
+      durationMin: props.workout?.durationMin || 0,
+      notes: props.workout?.notes || '',
+    })
+
+    showTemplateModal.value = false
+  } finally {
+    templateLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -62,7 +94,7 @@ const saveEdit = async (payload) => {
     :class="highlighted ? 'flash' : ''"
   >
     <div class="flex items-start justify-between gap-4">
-      <div>
+      <div class="min-w-0">
         <p class="font-bold">{{ workout.type }}</p>
         <p class="text-sm text-gray-600 dark:text-gray-300">
           {{ formatDate(workout.date) }} • {{ workout.durationMin }} min
@@ -72,8 +104,9 @@ const saveEdit = async (payload) => {
         </p>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex flex-wrap justify-end gap-2">
         <BaseButton variant="secondary" @click="openEdit"> Update </BaseButton>
+        <BaseButton variant="secondary" @click="openTemplateModal"> Save as template </BaseButton>
         <BaseButton variant="danger" @click="requestDelete"> Delete </BaseButton>
       </div>
 
@@ -93,6 +126,14 @@ const saveEdit = async (payload) => {
     message="Jeste li sigurni da želite obrisati ovaj workout?"
     @confirm="confirmDelete"
     @cancel="cancelDelete"
+  />
+
+  <SaveAsTemplateModal
+    :show="showTemplateModal"
+    :defaultName="`${workout?.type || 'Workout'} - ${workout?.durationMin || 0} min`"
+    :loading="templateLoading"
+    @close="closeTemplateModal"
+    @save="saveAsTemplate"
   />
 </template>
 

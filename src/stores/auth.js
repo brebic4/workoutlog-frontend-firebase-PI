@@ -13,6 +13,7 @@ import {
 } from '../api/auth'
 import { useWorkoutsStore } from './workouts'
 import { useAdminStore } from './admin'
+import { useTemplatesStore } from './templates'
 import { apiChangeTheme } from '../api/auth'
 import { applyTheme } from '../utils/theme'
 
@@ -126,6 +127,7 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       const workoutsStore = useWorkoutsStore()
       const adminStore = useAdminStore()
+      const templatesStore = useTemplatesStore()
 
       await apiLogout()
       this.firebaseUser = null
@@ -133,6 +135,7 @@ export const useAuthStore = defineStore('auth', {
 
       workoutsStore.clearWorkouts()
       adminStore.clearAdminState()
+      templatesStore.clearTemplates()
     },
 
     async forgotPassword(email) {

@@ -38,7 +38,7 @@ const onUpdate = async ({ id, payload }) => {
 }
 
 const filters = ref({
-  type: [],
+  types: [],
   dateFrom: '',
   dateTo: '',
   minDur: '',

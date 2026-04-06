@@ -1,8 +1,11 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 import BaseCard from '../ui/BaseCard.vue'
 import BaseInput from '../ui/BaseInput.vue'
 import BaseButton from '../ui/BaseButton.vue'
+import TemplatePicker from './TemplatePicker.vue'
+import { useTemplatesStore } from '../../stores/templates'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
   onSubmit: {
@@ -10,6 +13,9 @@ const props = defineProps({
     required: true,
   },
 })
+
+const ts = useTemplatesStore()
+const authStore = useAuthStore()
 
 const type = ref('')
 const duration = ref('')
@@ -20,6 +26,30 @@ const error = ref('')
 const typeRef = ref(null)
 
 const clearError = () => (error.value = '')
+
+watch(
+  () => [authStore.authReady, authStore.firebaseUser?.uid],
+  async ([ready, uid]) => {
+    console.log('WorkoutForm watch -> ready:', ready, 'uid:', uid)
+
+    if (!ready || !uid) return
+
+    try {
+      await ts.fetchTemplates()
+    } catch (e) {
+      console.error('Greška pri dohvaćanju templateova:', e)
+    }
+  },
+  { immediate: true },
+)
+
+const applyTemplate = (template) => {
+  type.value = template.type || ''
+  duration.value = template.durationMin || ''
+  notes.value = template.notes || ''
+  date.value = new Date().toISOString().slice(0, 10)
+  clearError()
+}
 
 const submit = async () => {
   clearError()
@@ -45,7 +75,7 @@ const submit = async () => {
 
   const ok = await props.onSubmit(payload)
 
-  if (!ok) return // ne resetiraj formu ako nije uspjelo
+  if (!ok) return
 
   type.value = ''
   duration.value = ''
@@ -60,6 +90,8 @@ const submit = async () => {
 <template>
   <BaseCard class="space-y-4">
     <h3 class="text-lg font-bold">Dodaj workout</h3>
+
+    <TemplatePicker @use-template="applyTemplate" />
 
     <form class="space-y-3" @submit.prevent="submit">
       <BaseInput
