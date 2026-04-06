@@ -17,10 +17,10 @@ const handleSessionExpiredClose = async () => {
 
 <template>
   <div
-    class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors"
+    class="h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors"
   >
     <Navbar />
-    <main class="p-6">
+    <main class="flex-1 min-h-0 overflow-y-auto p-6">
       <router-view />
 
       <InfoModal
