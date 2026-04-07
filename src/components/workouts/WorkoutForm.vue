@@ -26,6 +26,16 @@ const error = ref('')
 const typeRef = ref(null)
 
 const clearError = () => (error.value = '')
+const clearForm = async () => {
+  type.value = ''
+  duration.value = ''
+  date.value = ''
+  notes.value = ''
+  clearError()
+
+  await nextTick()
+  typeRef.value?.focus()
+}
 
 watch(
   () => [authStore.authReady, authStore.firebaseUser?.uid],
@@ -91,7 +101,7 @@ const submit = async () => {
   <BaseCard class="space-y-4">
     <h3 class="text-lg font-bold">Dodaj workout</h3>
 
-    <TemplatePicker @use-template="applyTemplate" />
+    <TemplatePicker @use-template="applyTemplate" @clear-template="clearForm" />
 
     <form class="space-y-3" @submit.prevent="submit">
       <BaseInput

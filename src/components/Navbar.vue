@@ -181,7 +181,7 @@ const closeMobileMenu = () => {
             </div>
           </div>
 
-          <BaseButton variant="secondary" @click.stop="toggleProfileMenu"> 👤Profile </BaseButton>
+          <BaseButton variant="secondary" @click.stop="toggleProfileMenu">👤Profile</BaseButton>
 
           <div
             v-if="showProfileMenu"

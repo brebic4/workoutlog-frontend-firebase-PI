@@ -6,7 +6,7 @@ import ConfirmModal from '../ui/ConfirmModal.vue'
 
 const ts = useTemplatesStore()
 
-const emit = defineEmits(['use-template'])
+const emit = defineEmits(['use-template', 'clear-template'])
 
 const open = ref(false)
 const showDeleteConfirm = ref(false)
@@ -43,12 +43,20 @@ const cancelDeleteTemplate = () => {
   showDeleteConfirm.value = false
   templateToDelete.value = null
 }
+
+const clearTemplate = () => {
+  emit('clear-template')
+  open.value = false
+}
 </script>
 
 <template>
   <div class="space-y-3">
     <div class="flex flex-col justify-center gap-3">
-      <h3 class="text-sm font-semibold text-slate-700 dark:text-gray-200">Templates</h3>
+      <div class="flex -flex-col justify-between items-center">
+        <h3 class="text-sm font-semibold text-slate-700 dark:text-gray-200">Templates</h3>
+        <BaseButton variant="secondary" type="button" @click="clearTemplate"> Clear </BaseButton>
+      </div>
 
       <BaseButton
         variant="secondary"
