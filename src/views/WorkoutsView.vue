@@ -6,11 +6,13 @@ import { useAuthStore } from '@/stores/auth'
 import WorkoutForm from '../components/workouts/WorkoutForm.vue'
 import WorkoutList from '../components/workouts/WorkoutList.vue'
 import WorkoutsToolbar from '../components/workouts/WorkoutsToolbar.vue'
+import WorkoutCalendar from '../components/workouts/WorkoutCalendar.vue'
 
 const ws = useWorkoutsStore()
 const auth = useAuthStore()
 
 const mobileTab = ref('list') // 'form' | 'list'
+const workoutsViewMode = ref('list') // 'list' | 'calendar'
 
 onMounted(() => {
   ws.fetchWorkouts()
@@ -134,11 +136,18 @@ const filteredWorkouts = computed(() => {
       class="lg:col-span-2 overflow-hidden min-h-0 h-[calc(100dvh-200px)] lg:h-[calc(100vh-160px)] grid grid-rows-[auto,1fr]"
       :class="mobileTab === 'list' ? 'grid' : 'hidden lg:grid'"
     >
-      <WorkoutsToolbar v-model="filters" :availableTypes="availableTypes" class="mb-4" />
+      <WorkoutsToolbar
+        v-model="filters"
+        :availableTypes="availableTypes"
+        :viewMode="workoutsViewMode"
+        @update:viewMode="workoutsViewMode = $event"
+        class="mb-4"
+      />
 
       <!-- 2. red: lista dobiva sav preostali prostor + skrol -->
       <div class="min-h-0 overflow-y-auto pr-2">
         <WorkoutList
+          v-if="workoutsViewMode === 'list'"
           :workouts="filteredWorkouts"
           :loading="ws.loading"
           :error="ws.error"
@@ -146,6 +155,8 @@ const filteredWorkouts = computed(() => {
           @delete="onDelete"
           @update="onUpdate"
         />
+
+        <WorkoutCalendar v-else :workouts="filteredWorkouts" />
       </div>
     </div>
   </div>

@@ -6,9 +6,13 @@ import { computed, ref } from 'vue'
 const props = defineProps({
   modelValue: Object,
   availableTypes: { type: Array, default: () => [] },
+  viewMode: {
+    type: String,
+    default: 'list',
+  },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'update:viewMode'])
 
 const showFiltersMobile = ref(false)
 
@@ -186,6 +190,39 @@ const typesLabel = computed(() => {
 
           <BaseButton variant="secondary" @click="reset">Reset</BaseButton>
         </div>
+      </div>
+    </div>
+
+    <!--LIST/CALENDAR VIEW BUTTONS-->
+    <div class="flex justify-start">
+      <div
+        class="inline-flex h-11 items-center overflow-hidden rounded-full bg-slate-200 p-1 dark:bg-gray-800"
+      >
+        <button
+          type="button"
+          class="h-9 min-w-25 whitespace-nowrap rounded-full px-4 text-sm transition cursor-pointer"
+          :class="
+            viewMode === 'list'
+              ? 'bg-white text-slate-900 shadow-sm dark:bg-gray-700 dark:text-gray-100'
+              : 'text-slate-600 dark:text-gray-400'
+          "
+          @click="$emit('update:viewMode', 'list')"
+        >
+          List view
+        </button>
+
+        <button
+          type="button"
+          class="h-9 min-w-30 whitespace-nowrap rounded-full px-4 text-sm transition cursor-pointer"
+          :class="
+            viewMode === 'calendar'
+              ? 'bg-white text-slate-900 shadow-sm dark:bg-gray-700 dark:text-gray-100'
+              : 'text-slate-600 dark:text-gray-400'
+          "
+          @click="$emit('update:viewMode', 'calendar')"
+        >
+          Calendar view
+        </button>
       </div>
     </div>
   </div>
