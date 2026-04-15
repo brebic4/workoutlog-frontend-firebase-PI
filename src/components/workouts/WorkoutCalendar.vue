@@ -126,7 +126,8 @@ function formatDate(dateValue) {
     >
       <div class="mb-3 flex items-center justify-between gap-3">
         <h3 class="text-lg font-bold text-slate-800 dark:text-gray-100">
-          Treninzi za {{ formatDate(selectedDateYmd) }}
+          {{ !selectedDateYmd ? 'Bez odabira' : 'Treninzi za' }}
+          {{ formatDate(selectedDateYmd) }}
         </h3>
 
         <span class="text-sm text-slate-500 dark:text-gray-400">
@@ -155,7 +156,14 @@ function formatDate(dateValue) {
         </div>
       </div>
 
-      <p v-else class="text-sm text-slate-500 dark:text-gray-400">
+      <p v-if="!selectedDateYmd" class="text-sm text-slate-500 dark:text-gray-400">
+        Molimo odaberite datum
+      </p>
+
+      <p
+        v-if="selectedDateYmd && !workoutsForSelectedDate.length"
+        class="text-sm text-slate-500 dark:text-gray-400"
+      >
         Nema treninga za odabrani datum.
       </p>
     </div>
