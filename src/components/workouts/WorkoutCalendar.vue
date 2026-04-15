@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
   workouts: {
@@ -8,8 +9,11 @@ const props = defineProps({
   },
 })
 
+const authStore = useAuthStore()
+
 const selectedDate = ref(new Date())
 const resultsRef = ref(null)
+const isDark = computed(() => authStore.currentTheme === 'dark')
 
 function toYmd(value) {
   if (!value) return ''
@@ -53,7 +57,7 @@ const calendarAttributes = computed(() => {
       fillMode: 'light',
     },
     dot: {
-      color: 'blue',
+      color: 'white',
     },
     popover: {
       label: `${items.length} ${items.length === 1 ? 'trening' : 'treninga'}`,
@@ -110,6 +114,8 @@ function formatDate(dateValue) {
         expanded
         borderless
         transparent
+        color="blue"
+        :is-dark="isDark"
         class="workout-calendar"
       />
     </div>
@@ -188,5 +194,21 @@ function formatDate(dateValue) {
 
 .scroll-offset {
   scroll-margin-top: 80px;
+}
+
+.dark .workout-calendar :deep(.vc-title) {
+  color: rgb(241 245 249);
+}
+
+.dark .workout-calendar :deep(.vc-weekday) {
+  color: rgb(148 163 184);
+}
+
+.dark .workout-calendar :deep(.vc-arrow) {
+  color: rgb(226 232 240);
+}
+
+.dark .workout-calendar :deep(.vc-day-content:hover) {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 </style>
