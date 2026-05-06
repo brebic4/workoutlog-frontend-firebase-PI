@@ -60,10 +60,10 @@ Aplikacija podržava autentifikaciju korisnika, upravljanje profilom te napredne
 
 ## 🎨 Prototip
 
-👉 Link na prototip: _(naknadno dodati)_
+[🔗 Pogledaj prototip u Figmi](https://www.figma.com/proto/LORYo61oNpv5wwyEIeJZGn/WorkoutLog?node-id=0-1&t=lATdNbwCUeMrBPY9-1)
 
 ---
 
 ## 🌐 Javni link
 
-👉 Link na aplikaciju: _(naknadno dodati)_
+🔗 Link na aplikaciju: (naknadno dodati)
