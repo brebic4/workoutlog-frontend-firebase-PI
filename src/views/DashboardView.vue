@@ -89,43 +89,53 @@ function formatDate(date) {
 </script>
 
 <template>
-  <div v-if="ws.loading" class="rounded-xl border border-slate-200 bg-white p-6 text-slate-600">
+  <div
+    v-if="ws.loading"
+    class="rounded-xl border border-slate-200 bg-white p-6 text-slate-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+  >
     Učitavanje statistike...
   </div>
 
-  <div v-else-if="ws.error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
+  <div
+    v-else-if="ws.error"
+    class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+  >
     {{ ws.error }}
   </div>
 
   <div v-else class="space-y-6">
     <div>
-      <h1 class="text-2xl font-bold text-slate-800">Moj dashboard</h1>
-      <p class="mt-1 text-sm text-slate-500">Pregled statistike i aktivnosti treninga.</p>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-gray-100">Moj dashboard</h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-gray-400">
+        Pregled statistike i aktivnosti treninga.
+      </p>
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <BaseCard class="p-5">
-        <p class="text-sm font-medium text-slate-500">Ukupno treninga</p>
-        <p class="mt-2 text-3xl font-bold text-slate-800">
+        <p class="text-sm font-medium text-slate-500 dark:text-gray-400">Ukupno treninga</p>
+        <p class="mt-2 text-3xl font-bold text-slate-800 dark:text-gray-100">
           {{ totalWorkouts }}
         </p>
       </BaseCard>
 
       <BaseCard class="p-5">
-        <p class="text-sm font-medium text-slate-500">Ukupno minuta</p>
-        <p class="mt-2 text-3xl font-bold text-slate-800">
+        <p class="text-sm font-medium text-slate-500 dark:text-gray-400">Ukupno minuta</p>
+        <p class="mt-2 text-3xl font-bold text-slate-800 dark:text-gray-100">
           {{ totalMinutes }}
         </p>
       </BaseCard>
 
       <BaseCard class="p-5">
-        <p class="text-sm font-medium text-slate-500">Prosječno trajanje</p>
-        <p class="mt-2 text-3xl font-bold text-slate-800">{{ averageDuration }} min</p>
+        <p class="text-sm font-medium text-slate-500 dark:text-gray-400">Prosječno trajanje</p>
+        <p class="mt-2 text-3xl font-bold text-slate-800 dark:text-gray-100">
+          {{ averageDuration }} min
+        </p>
       </BaseCard>
 
       <BaseCard class="p-5">
-        <p class="text-sm font-medium text-slate-500">Najčešći tip</p>
-        <p class="mt-2 text-2xl font-bold text-slate-800">
+        <p class="text-sm font-medium text-slate-500 dark:text-gray-400">Najčešći tip</p>
+        <p class="mt-2 text-2xl font-bold text-slate-800 dark:text-gray-100">
           {{ mostFrequentType }}
         </p>
       </BaseCard>
@@ -133,19 +143,19 @@ function formatDate(date) {
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <BaseCard class="p-5">
-        <h2 class="text-lg font-semibold text-slate-800">Aktivnost</h2>
+        <h2 class="text-lg font-semibold text-slate-800 dark:text-gray-100">Aktivnost</h2>
 
         <div class="mt-4 grid grid-cols-2 gap-4">
-          <div class="rounded-xl bg-slate-50 p-4">
-            <p class="text-sm text-slate-500">Zadnjih 7 dana</p>
-            <p class="mt-2 text-2xl font-bold text-slate-800">
+          <div class="rounded-xl bg-slate-50 p-4 dark:bg-gray-800">
+            <p class="text-sm text-slate-500 dark:text-gray-400">Zadnjih 7 dana</p>
+            <p class="mt-2 text-2xl font-bold text-slate-800 dark:text-gray-100">
               {{ workoutsLast7Days }}
             </p>
           </div>
 
-          <div class="rounded-xl bg-slate-50 p-4">
-            <p class="text-sm text-slate-500">Zadnjih 30 dana</p>
-            <p class="mt-2 text-2xl font-bold text-slate-800">
+          <div class="rounded-xl bg-slate-50 p-4 dark:bg-gray-800">
+            <p class="text-sm text-slate-500 dark:text-gray-400">Zadnjih 30 dana</p>
+            <p class="mt-2 text-2xl font-bold text-slate-800 dark:text-gray-100">
               {{ workoutsLast30Days }}
             </p>
           </div>
@@ -153,16 +163,18 @@ function formatDate(date) {
       </BaseCard>
 
       <BaseCard class="p-5">
-        <h2 class="text-lg font-semibold text-slate-800">Raspodjela po tipu</h2>
+        <h2 class="text-lg font-semibold text-slate-800 dark:text-gray-100">Raspodjela po tipu</h2>
 
         <div v-if="workoutsByType.length" class="mt-4 space-y-4">
           <div v-for="item in workoutsByType" :key="item.type">
             <div class="mb-1 flex items-center justify-between text-sm">
-              <span class="font-medium text-slate-700">{{ item.type }}</span>
-              <span class="text-slate-500"> {{ item.count }} ({{ item.percentage }}%) </span>
+              <span class="font-medium text-slate-700 dark:text-gray-300">{{ item.type }}</span>
+              <span class="text-slate-500 dark:text-gray-400">
+                {{ item.count }} ({{ item.percentage }}%)
+              </span>
             </div>
 
-            <div class="h-3 overflow-hidden rounded-full bg-slate-200">
+            <div class="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-gray-700">
               <div
                 class="h-full rounded-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${item.percentage}%` }"
@@ -171,33 +183,39 @@ function formatDate(date) {
           </div>
         </div>
 
-        <p v-else class="mt-4 text-sm text-slate-500">Nema podataka za prikaz.</p>
+        <p v-else class="mt-4 text-sm text-slate-500 dark:text-gray-400">
+          Nema podataka za prikaz.
+        </p>
       </BaseCard>
     </div>
 
     <BaseCard class="p-5">
-      <h2 class="text-lg font-semibold text-slate-800">Zadnjih 5 treninga</h2>
+      <h2 class="text-lg font-semibold text-slate-800 dark:text-gray-100">Zadnjih 5 treninga</h2>
 
       <div v-if="recentWorkouts.length" class="mt-4 space-y-3">
         <div
           v-for="workout in recentWorkouts"
           :key="workout.id"
-          class="flex flex-col gap-2 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between"
+          class="flex flex-col gap-2 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700"
         >
           <div>
-            <p class="font-semibold text-slate-800">
+            <p class="font-semibold text-slate-800 dark:text-gray-100">
               {{ workout.type || 'Bez tipa' }}
             </p>
-            <p class="text-sm text-slate-500">
+            <p class="text-sm text-slate-500 dark:text-gray-400">
               {{ formatDate(workout.date) }}
             </p>
           </div>
 
-          <div class="text-sm text-slate-600">{{ workout.durationMin || 0 }} min</div>
+          <div class="text-sm text-slate-600 dark:text-gray-300">
+            {{ workout.durationMin || 0 }} min
+          </div>
         </div>
       </div>
 
-      <p v-else class="mt-4 text-sm text-slate-500">Još nema treninga za prikaz.</p>
+      <p v-else class="mt-4 text-sm text-slate-500 dark:text-gray-400">
+        Još nema treninga za prikaz.
+      </p>
     </BaseCard>
   </div>
 </template>
