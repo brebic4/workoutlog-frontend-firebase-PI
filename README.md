@@ -66,4 +66,4 @@ Aplikacija podržava autentifikaciju korisnika, upravljanje profilom te napredne
 
 ## 🌐 Javni link
 
-🔗 Link na aplikaciju: (naknadno dodati)
+[🔗 Klikni javni link](https://workout-log-pi.netlify.app/login)
